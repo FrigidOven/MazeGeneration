@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Accessibility;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,8 @@ namespace MazeGeneration
         private int columnCount;
         private int rowCount;
 
+        private (int Column, int Row) origin;
+
         public Maze(int numberOfColumns, int numberOfRows, Random randomNumberGenerator)
         {
             columnCount = numberOfColumns;
@@ -20,7 +23,14 @@ namespace MazeGeneration
 
             grid = new int[columnCount, rowCount];
 
-            GenerateGraph();
+            int graphType = random.Next(3);
+
+            if (graphType == 0)
+                GenerateGraphConvergentQuadrants();
+            else if (graphType == 1)
+                GenerateGraphDivergentQuadrants();
+            else
+                GenerateGraphDivergeFromOrigin();
         }
         public void Draw(MazeSprite sprites, SpriteBatch spriteBatch)
         {
@@ -40,18 +50,95 @@ namespace MazeGeneration
                 x += width;
             }
         }
-        private void GenerateGraph()
+        private void GenerateGraphDivergentQuadrants()
+        {
+            origin = (columnCount / 2, rowCount / 2);
+            for (int i = columnCount / 2; i >= 0; i --)
+            {
+                for (int j = rowCount / 2; j >= 0; j --)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+
+            for (int i = columnCount / 2 + 1; i < columnCount; i++)
+            {
+                for (int j = rowCount / 2; j >= 0; j--)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+
+            for (int i = columnCount / 2; i >= 0; i--)
+            {
+                for (int j = rowCount / 2 + 1; j < rowCount; j++)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+
+            for (int i = columnCount / 2 + 1; i < columnCount; i++)
+            {
+                for (int j = rowCount / 2 + 1; j < rowCount; j++)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+        }
+        private void GenerateGraphConvergentQuadrants()
+        {
+            origin = (0, 0);
+            for (int i = 0; i < columnCount / 2; i++)
+            {
+                for (int j = 0; j < rowCount / 2; j++)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+
+            origin = (columnCount - 1, 0);
+            for (int i = columnCount - 1; i >= columnCount / 2; i--)
+            {
+                for (int j = 0; j < rowCount / 2; j++)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+
+            origin = (0, rowCount - 1);
+            for (int i = 0; i < columnCount / 2; i++)
+            {
+                for (int j = rowCount - 1; j >= rowCount / 2; j--)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+
+            origin = (columnCount - 1, rowCount - 1);
+            for (int i = columnCount - 1; i >= columnCount / 2; i--)
+            {
+                for (int j = rowCount - 1; j >= rowCount / 2; j--)
+                {
+                    GenerateCell(i, j);
+                }
+            }
+        }
+        private void GenerateGraphDivergeFromOrigin()
         {
             for (int i = 0; i < columnCount; i++)
             {
                 for (int j = 0; j < rowCount; j++)
                 {
-                    grid[i, j] = GenerateCell((i, j), GetCell(i, j - 1),
-                                                      GetCell(i + 1, j),
-                                                      GetCell(i, j + 1),
-                                                      GetCell(i - 1, j));
+                    GenerateCell(i, j);
                 }
             }
+        }
+        private void GenerateCell(int column, int row)
+        {
+            grid[column, row] = GenerateCell((column, row), GetCell(column, row - 1),
+                                                            GetCell(column + 1, row),
+                                                            GetCell(column, row + 1),
+                                                            GetCell(column - 1, row));
         }
         private int GenerateCell((int Row, int Col) location, int north, int east, int south, int west)
         {
@@ -116,7 +203,7 @@ namespace MazeGeneration
                 grid[location.Col, location.Row - 1] |= 0b0010;
                 return (0b1000, 1);
             }
-            if (north == -1 && (location == (0, 0) || cellValue != 0b0000))
+            if (north == -1 && (location == origin || cellValue != 0b0000))
             {
                 return (0b1000, 1);
             }
@@ -129,7 +216,7 @@ namespace MazeGeneration
                 grid[location.Col + 1, location.Row] |= 0b0001;
                 return (0b0100, 1);
             }
-            if (east == -1 && (location == (0, 0) || cellValue != 0b0000))
+            if (east == -1 && (location == origin || cellValue != 0b0000))
             {
                 return (0b0100, 1);
             }
@@ -142,7 +229,7 @@ namespace MazeGeneration
                 grid[location.Col, location.Row + 1] |= 0b1000;
                 return (0b0010, 1);
             }
-            if (south == -1 && (location == (0, 0) || cellValue != 0b0000))
+            if (south == -1 && (location == origin || cellValue != 0b0000))
             {
                 return (0b0010, 1);
             }
@@ -155,7 +242,7 @@ namespace MazeGeneration
                 grid[location.Col - 1, location.Row] |= 0b0100;
                 return (0b0001, 1);
             }
-            if (west == -1 && (location == (0, 0) || cellValue != 0b0000))
+            if (west == -1 && (location == origin || cellValue != 0b0000))
             {
                 return (0b0001, 1);
             }
