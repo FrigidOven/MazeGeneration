@@ -1,7 +1,5 @@
-﻿using Accessibility;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 
 namespace MazeGeneration
 {
@@ -23,14 +21,7 @@ namespace MazeGeneration
 
             grid = new int[columnCount, rowCount];
 
-            int graphType = random.Next(3);
-
-            if (graphType == 0)
-                GenerateGraphConvergentQuadrants();
-            else if (graphType == 1)
-                GenerateGraphDivergentQuadrants();
-            else
-                GenerateGraphDivergeFromOrigin();
+            GenerateGraphVerticalSnaking();
         }
         public void Draw(MazeSprite sprites, SpriteBatch spriteBatch)
         {
@@ -48,6 +39,30 @@ namespace MazeGeneration
                 }
                 y = 0;
                 x += width;
+            }
+        }
+        private void GenerateGraphVerticalSnaking()
+        {
+            int jStep = 1;
+            int j = 0;
+
+            if (random.Next(2) == 0)
+            {
+                jStep = -1;
+                j = rowCount - 1;
+            }
+
+            origin = (0, j);
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                while ( 0 <= j && j < rowCount)
+                {
+                    GenerateCell(i, j);
+                    j += jStep;
+                }
+                jStep *= -1;
+                j += jStep;
             }
         }
         private void GenerateGraphDivergentQuadrants()
