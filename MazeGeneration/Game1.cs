@@ -17,8 +17,8 @@ namespace MazeGeneration
         private Texture2D mazeTiles;
         private MazeSprite mazeSprite;
 
-        private int columnCount = 1920 / 16 - 7;
-        private int rowCount = 1080 / 16 - 7;
+        private int columnCount = 1920 / 16 - 16;
+        private int rowCount = 1080 / 16 - 16;
         private int spriteSize = 16;
 
         public Game1()
@@ -32,7 +32,7 @@ namespace MazeGeneration
         {
             seed = random.Next(50_000);
             random = new Random(seed);
-            Console.WriteLine("Seed: " + seed);
+            System.Diagnostics.Debug.WriteLine("Seed: " + seed);
 
             maze = new Maze(columnCount, rowCount, random);
 
