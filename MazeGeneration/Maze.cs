@@ -21,7 +21,7 @@ namespace MazeGeneration
 
             grid = new int[columnCount, rowCount];
 
-            GenerateGraphVerticalSnaking();
+            GenerateGraphSpiralInwards();
         }
         public void Draw(MazeSprite sprites, SpriteBatch spriteBatch)
         {
@@ -39,6 +39,67 @@ namespace MazeGeneration
                 }
                 y = 0;
                 x += width;
+            }
+        }
+        private void GenerateGraphSpiralInwards()
+        {
+            int iMin = 0;
+            int iMax = columnCount - 1;
+
+            int jMin = 0;
+            int jMax = rowCount - 1;
+
+            int direction = 0b0100;
+
+            origin = (0, 0);
+
+            for (int visited = 0; visited < columnCount * rowCount; visited++)
+            {
+                if (direction == 0b0100)
+                {
+                    int j = jMin;
+                    for (int i = iMin; i <= iMax; i++)
+                    {
+                        GenerateCell(i, j);
+                    }
+                    jMin++;
+                    direction = 0b0010;
+                }
+                else if (direction == 0b0010)
+                {
+                    int i = iMax;
+                    for (int j = jMin; j <= jMax; j++)
+                    {
+                        GenerateCell(i, j);
+                    }
+                    iMax--;
+                    direction = 0b0001;
+                }
+                else if (direction == 0b0001)
+                {
+                    int j = jMax;
+                    for (int i = iMax; iMin <= i; i--)
+                    {
+                        GenerateCell(i, j);
+                    }
+                    jMax--;
+                    direction = 0b1000;
+                }
+                else if (direction == 0b1000)
+                {
+                    int i = iMin;
+                    for (int j = jMax; jMin <= j; j--)
+                    {
+                        GenerateCell(i, j);
+                    }
+                    iMin++;
+                    direction = 0b0100;
+                }
+
+                jMin = Math.Clamp(jMin, 0, rowCount - 1);
+                jMax = Math.Clamp(jMax, 0, rowCount - 1);
+                iMin = Math.Clamp(iMin, 0, columnCount - 1);
+                iMax = Math.Clamp(iMax, 0, columnCount - 1);
             }
         }
         private void GenerateGraphVerticalSnaking()
