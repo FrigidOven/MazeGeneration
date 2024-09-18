@@ -65,6 +65,31 @@ namespace MazeGeneration
                 j += jStep;
             }
         }
+        private void GenerateGraphHorizontalSnaking()
+        {
+            int iStep = 1;
+            int i = 0;
+
+            if (random.Next(2) == 0)
+            {
+                iStep = -1;
+                i = columnCount - 1;
+            }
+
+            origin = (i, 0);
+
+            for (int j = 0; j < rowCount; j++)
+            {
+                while (0 <= i && i < columnCount)
+                {
+                    GenerateCell(i, j);
+                    i += iStep;
+                }
+                iStep *= -1;
+                i += iStep;
+            }
+
+        }
         private void GenerateGraphDivergentQuadrants()
         {
             origin = (columnCount / 2, rowCount / 2);
