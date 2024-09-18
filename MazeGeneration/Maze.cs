@@ -21,7 +21,7 @@ namespace MazeGeneration
 
             grid = new int[columnCount, rowCount];
 
-            GenerateGraphSpiralInwards();
+            GenerateGraphVerticalSnaking();
         }
         public void Draw(MazeSprite sprites, SpriteBatch spriteBatch)
         {
