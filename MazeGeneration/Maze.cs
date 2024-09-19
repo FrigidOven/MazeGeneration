@@ -27,8 +27,8 @@ namespace MazeGeneration
         {
             int x = sprites.tileProportions.X;
             int y = sprites.tileProportions.Y;
-            int width = sprites.tileProportions.Width;
-            int height = sprites.tileProportions.Height;
+            int width = sprites.tileProportions.Width * sprites.imageScale;
+            int height = sprites.tileProportions.Height * sprites.imageScale;
 
             for (int i = 0; i < columnCount; i++)
             {

@@ -17,9 +17,11 @@ namespace MazeGeneration
         private Texture2D mazeTiles;
         private MazeSprite mazeSprite;
 
-        private int columnCount = 1920 / 16 - 16;
-        private int rowCount = 1080 / 16 - 16;
-        private int spriteSize = 16;
+        private static int spriteSize = 16;
+        private static int imageScale = 8;
+
+        private int columnCount = (1920 / spriteSize) / imageScale;
+        private int rowCount = (1080 / spriteSize) / imageScale;
 
         public Game1()
         {
@@ -37,8 +39,8 @@ namespace MazeGeneration
             maze = new Maze(columnCount, rowCount, random);
 
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = columnCount * spriteSize;
-            graphics.PreferredBackBufferHeight = rowCount * spriteSize;
+            graphics.PreferredBackBufferWidth = columnCount * spriteSize * imageScale;
+            graphics.PreferredBackBufferHeight = rowCount * spriteSize * imageScale;
             graphics.ApplyChanges();
 
             base.Initialize();
@@ -49,7 +51,7 @@ namespace MazeGeneration
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             mazeTiles = Content.Load<Texture2D>("mazetiles");
-            mazeSprite = new MazeSprite(mazeTiles, new Rectangle(0, 0, spriteSize, spriteSize));
+            mazeSprite = new MazeSprite(mazeTiles, new Rectangle(0, 0, spriteSize, spriteSize), imageScale);
         }
 
         protected override void Update(GameTime gameTime)
